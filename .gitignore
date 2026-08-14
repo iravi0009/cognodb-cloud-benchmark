@@ -1,15 +1,26 @@
+# Python environment
 .venv/
+
+# Secrets
 .env
+
+# Python cache
 __pycache__/
 *.pyc
 
+# Benchmark results
 results/raw/
 results/processed/
 results/charts/
 
+# Generated benchmark dataset
+data/generated/
+
+# Other dataset/archive files
 data/*.csv
 data/*.txt
 data/*.zip
 
+# IDE
 .vscode/
 .idea/
