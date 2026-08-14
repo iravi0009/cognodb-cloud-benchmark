@@ -1,0 +1,51 @@
+import os
+
+from dotenv import load_dotenv
+from neo4j import GraphDatabase
+
+
+load_dotenv()
+
+URI = os.getenv("COGNODB_URI")
+USERNAME = os.getenv("COGNODB_USERNAME")
+PASSWORD = os.getenv("COGNODB_PASSWORD")
+
+
+if not URI:
+    raise RuntimeError("COGNODB_URI is missing from .env")
+
+if not USERNAME:
+    raise RuntimeError("COGNODB_USERNAME is missing from .env")
+
+if not PASSWORD:
+    raise RuntimeError("COGNODB_PASSWORD is missing from .env")
+
+
+def main():
+    print("Connecting to CognoDB...")
+
+    driver = GraphDatabase.driver(
+        URI,
+        auth=(USERNAME, PASSWORD),
+    )
+
+    try:
+        driver.verify_connectivity()
+
+        print("Connection successful!")
+
+        with driver.session() as session:
+            result = session.run(
+                "RETURN 'CognoDB connection successful' AS message"
+            )
+
+            record = result.single()
+
+            print(record["message"])
+
+    finally:
+        driver.close()
+
+
+if __name__ == "__main__":
+    main()

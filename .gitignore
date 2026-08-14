@@ -1,0 +1,15 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+
+results/raw/
+results/processed/
+results/charts/
+
+data/*.csv
+data/*.txt
+data/*.zip
+
+.vscode/
+.idea/
