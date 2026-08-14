@@ -1,8 +1,10 @@
+@'
+
 \# CognoDB Cloud Graph Database Benchmark
 
 
 
-A reproducible benchmarking framework for evaluating the performance of a cloud-hosted graph database using a synthetic graph dataset, representative graph-query workloads, automated latency measurement, and result analysis.
+A reproducible benchmarking framework for evaluating cloud-hosted graph database performance using a synthetic graph dataset, representative graph-query workloads, automated latency measurement, statistical analysis, and performance visualization.
 
 
 
@@ -18,11 +20,33 @@ This project provides a complete benchmark pipeline for evaluating graph databas
 
 
 
-The system generates a synthetic graph dataset, validates the generated data, loads the dataset into CognoDB Cloud, executes representative graph workloads, measures query latency, and generates statistical summaries and performance visualizations.
+The framework:
 
 
 
-The benchmark is designed to be:
+1\. Generates a synthetic graph dataset.
+
+2\. Validates the generated dataset.
+
+3\. Loads the dataset into CognoDB Cloud.
+
+4\. Verifies the loaded graph.
+
+5\. Executes representative graph-query workloads.
+
+6\. Measures query latency.
+
+7\. Stores raw benchmark measurements.
+
+8\. Calculates statistical performance metrics.
+
+9\. Generates workload-level summaries.
+
+10\. Generates performance visualization charts.
+
+
+
+The project is designed to be:
 
 
 
@@ -30,17 +54,17 @@ The benchmark is designed to be:
 
 \- Modular
 
-\- Extensible
-
 \- Dataset-driven
 
 \- Workload-driven
 
-\- Suitable for cross-database comparison
+\- Extensible
+
+\- Suitable for future cross-database benchmarking
 
 
 
-The project currently contains a working CognoDB adapter and benchmark implementation.
+The current implementation includes a working CognoDB adapter and a complete benchmark execution and analysis pipeline.
 
 
 
@@ -60,19 +84,21 @@ The main objectives of this project are:
 
 2\. Generate a controlled synthetic graph dataset.
 
-3\. Load large-scale graph data into CognoDB Cloud.
+3\. Load large-scale graph data into a cloud-hosted graph database.
 
 4\. Execute representative graph queries.
 
-5\. Measure query latency and reliability.
+5\. Measure query latency and execution reliability.
 
 6\. Calculate aggregate performance statistics.
 
-7\. Generate workload-level performance reports.
+7\. Generate workload-level benchmark reports.
 
-8\. Produce charts for latency analysis.
+8\. Generate latency visualization charts.
 
-9\. Provide a foundation for future cross-database benchmarking.
+9\. Provide an extensible architecture for additional graph databases.
+
+10\. Establish a foundation for future cross-database performance comparison.
 
 
 
@@ -86,119 +112,171 @@ The main objectives of this project are:
 
 ```text
 
-\&#x20;                   ┌──────────────────────┐
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;                   │  Synthetic Dataset   │
+&#x20;                 │ Synthetic Dataset      │
 
-\&#x20;                   │     Generator        │
+&#x20;                 │ Generator              │
 
-\&#x20;                   └──────────┬───────────┘
+&#x20;                 │ generate\_dataset.py    │
 
-\&#x20;                              │
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;                              ▼
+&#x20;                             │
 
-\&#x20;                   ┌──────────────────────┐
+&#x20;                             ▼
 
-\&#x20;                   │ Dataset Validation   │
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;                   └──────────┬───────────┘
+&#x20;                 │ Dataset Validation     │
 
-\&#x20;                              │
+&#x20;                 │ validate\_dataset.py    │
 
-\&#x20;                              ▼
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;                   ┌──────────────────────┐
+&#x20;                             │
 
-\&#x20;                   │    CognoDB Cloud     │
+&#x20;                             ▼
 
-\&#x20;                   │    Graph Database    │
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;                   └──────────┬───────────┘
+&#x20;                 │ Database Loader         │
 
-\&#x20;                              │
+&#x20;                 │ load\_cognodb.py        │
 
-\&#x20;            ┌─────────────────┼─────────────────┐
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;            │                 │                 │
+&#x20;                             │
 
-\&#x20;            ▼                 ▼                 ▼
+&#x20;                             ▼
 
-\&#x20;       Person Nodes      Company Nodes    Technology Nodes
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;            │                 │                 │
+&#x20;                 │ CognoDB Cloud           │
 
-\&#x20;            └─────────────────┼─────────────────┘
+&#x20;                 │ Graph Database          │
 
-\&#x20;                              │
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;                              ▼
+&#x20;                             │
 
-\&#x20;                   ┌──────────────────────┐
+&#x20;                             ▼
 
-\&#x20;                   │ Benchmark Workloads  │
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;                   └──────────┬───────────┘
+&#x20;                 │ Database Verification   │
 
-\&#x20;                              │
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;                              ▼
+&#x20;                             │
 
-\&#x20;                   ┌──────────────────────┐
+&#x20;                             ▼
 
-\&#x20;                   │ Latency Measurement  │
+&#x20;                 ┌────────────────────────┐
 
-\&#x20;                   └──────────┬───────────┘
+&#x20;                 │ Benchmark Workloads     │
 
-\&#x20;                              │
+&#x20;                 │ queries.py              │
 
-\&#x20;                 ┌────────────┼────────────┐
+&#x20;                 └───────────┬────────────┘
 
-\&#x20;                 │            │            │
+&#x20;                             │
 
-\&#x20;                 ▼            ▼            ▼
+&#x20;                             ▼
 
-\&#x20;            Raw Results   Statistics    Charts
+&#x20;                 ┌────────────────────────┐
+
+&#x20;                 │ Benchmark Runner        │
+
+&#x20;                 │ runner.py              │
+
+&#x20;                 └───────────┬────────────┘
+
+&#x20;                             │
+
+&#x20;                             ▼
+
+&#x20;                 ┌────────────────────────┐
+
+&#x20;                 │ Latency Measurement     │
+
+&#x20;                 └───────────┬────────────┘
+
+&#x20;                             │
+
+&#x20;               ┌─────────────┼─────────────┐
+
+&#x20;               ▼             ▼             ▼
+
+&#x20;         Raw Results     Statistics      Charts
+
+&#x20;               │             │             │
+
+&#x20;               └─────────────┼─────────────┘
+
+&#x20;                             ▼
+
+&#x20;                 ┌────────────────────────┐
+
+&#x20;                 │ Result Analysis         │
+
+&#x20;                 │ analyze\_results.py      │
+
+&#x20;                 └────────────────────────┘
 
 
 
-
-
-📊 Dataset
-
-
-
-The benchmark uses a synthetic graph dataset containing people, companies, technologies, and relationships between them.
+````
 
 
 
-Dataset Statistics
-
-Entity / Relationship	Records
-
-Persons	10,000
-
-Companies	1,000
-
-Technologies	100
-
-WORKS\\\_AT relationships	10,000
-
-KNOWS relationships	50,000
-
-Person USES Technology	20,000
-
-Company USES Technology	5,000
-
-Total Nodes	11,100
-
-Total Relationships	85,000
-
-Graph Model
-
-Person ────── WORKS\\\_AT ──────> Company
+\---
 
 
+
+\## 🗃️ Dataset
+
+
+
+The benchmark uses a synthetic graph dataset representing people, companies, technologies, and relationships between them.
+
+
+
+\### Dataset Statistics
+
+
+
+| Entity / RelationshipRecords |            |
+
+| ---------------------------- | ---------- |
+
+| Persons                      | 10,000     |
+
+| Companies                    | 1,000      |
+
+| Technologies                 | 100        |
+
+| `WORKS\_AT` relationships     | 10,000     |
+
+| `KNOWS` relationships        | 50,000     |
+
+| Person `USES` Technology     | 20,000     |
+
+| Company `USES` Technology    | 5,000      |
+
+| \*\*Total Nodes\*\*              | \*\*11,100\*\* |
+
+| \*\*Total Relationships\*\*      | \*\*85,000\*\* |
+
+
+
+\### Graph Model
+
+
+
+```
+
+Person ────── WORKS\_AT ──────> Company
 
 
 
@@ -206,57 +284,15 @@ Person ────── KNOWS ──────────> Person
 
 
 
-
-
 Person ────── USES ───────────> Technology
-
-
 
 
 
 Company ───── USES ───────────> Technology
 
-📁 Dataset Files
 
 
-
-The generated dataset contains seven CSV files:
-
-
-
-data/
-
-└── generated/
-
-\&#x20;   ├── persons.csv
-
-\&#x20;   ├── companies.csv
-
-\&#x20;   ├── technologies.csv
-
-\&#x20;   ├── works\\\_at.csv
-
-\&#x20;   ├── knows.csv
-
-\&#x20;   ├── person\\\_uses.csv
-
-\&#x20;   └── company\\\_uses.csv
-
-Dataset Record Counts
-
-persons.csv          10,000 records
-
-companies.csv         1,000 records
-
-technologies.csv        100 records
-
-works\\\_at.csv         10,000 records
-
-knows.csv            50,000 records
-
-person\\\_uses.csv      20,000 records
-
-company\\\_uses.csv      5,000 records
+```
 
 
 
@@ -264,11 +300,77 @@ The dataset is generated locally using the project dataset-generation script.
 
 
 
-Generated datasets are excluded from Git to keep the repository lightweight and reproducible.
+Generated datasets are excluded from Git where appropriate to keep the repository lightweight and reproducible.
 
 
 
-🧪 Benchmark Methodology
+\---
+
+
+
+\## 📁 Dataset Files
+
+
+
+The generated dataset contains seven CSV files:
+
+
+
+```
+
+data/
+
+└── generated/
+
+&#x20;   ├── persons.csv
+
+&#x20;   ├── companies.csv
+
+&#x20;   ├── technologies.csv
+
+&#x20;   ├── works\_at.csv
+
+&#x20;   ├── knows.csv
+
+&#x20;   ├── person\_uses.csv
+
+&#x20;   └── company\_uses.csv
+
+
+
+```
+
+
+
+\### Dataset Record Counts
+
+
+
+| FileRecordsDescription |        |                                     |
+
+| ---------------------- | ------ | ----------------------------------- |
+
+| `persons.csv`          | 10,000 | Person nodes                        |
+
+| `companies.csv`        | 1,000  | Company nodes                       |
+
+| `technologies.csv`     | 100    | Technology nodes                    |
+
+| `works\_at.csv`         | 10,000 | Person-to-company relationships     |
+
+| `knows.csv`            | 50,000 | Person-to-person relationships      |
+
+| `person\_uses.csv`      | 20,000 | Person-to-technology relationships  |
+
+| `company\_uses.csv`     | 5,000  | Company-to-technology relationships |
+
+
+
+\---
+
+
+
+\## 🧪 Benchmark Methodology
 
 
 
@@ -276,105 +378,147 @@ The benchmark follows a controlled execution pipeline.
 
 
 
+```
+
 Generate Dataset
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Validate Dataset
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Load Dataset
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Verify Database
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Execute Warm-up
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Execute Benchmark Runs
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Collect Latency
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Save Raw Results
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Analyze Results
 
-\&#x20;      ↓
+&#x20;      ↓
 
 Generate Charts
 
 
 
-For each workload, the benchmark records:
+```
 
 
 
-Workload name
-
-Database name
-
-Description
-
-Run number
-
-Execution status
-
-Query latency
-
-Returned record count
-
-Error information when applicable
-
-🔍 Benchmark Workloads
+For each benchmark measurement, the framework records:
 
 
 
-The current benchmark contains 10 workloads.
+\- Workload name
+
+\- Database name
+
+\- Workload description
+
+\- Run number
+
+\- Execution status
+
+\- Query latency
+
+\- Returned record count
+
+\- Error information when applicable
 
 
 
-Workload	Description
-
-person\\\_lookup	Look up a person by ID
-
-company\\\_lookup	Look up a company by ID
-
-technology\\\_lookup	Look up a technology by ID
-
-person\\\_company	Find the company where a person works
-
-person\\\_connections	Find people directly connected to a person
-
-person\\\_technologies	Find technologies used by a person
-
-company\\\_technologies	Find technologies used by a company
-
-technology\\\_users	Find people using a technology
-
-two\\\_hop\\\_network	Perform a two-hop KNOWS traversal
-
-company\\\_employee\\\_count	Count employees of a company
-
-🔎 Query Workload Categories
+\### Current Execution Configuration
 
 
 
-The workloads represent different graph-query patterns.
+The current benchmark uses:
 
 
 
-1\\. Direct Lookup
+\- 10 workloads
+
+\- 1 warm-up run per workload
+
+\- 2 measured runs per workload
+
+\- 10 measurements per workload
+
+\- 100 total measurements
+
+\- CognoDB Cloud as the active database
+
+
+
+\---
+
+
+
+\## 🔍 Benchmark Workloads
+
+
+
+The current benchmark contains 10 graph-query workloads.
+
+
+
+| WorkloadDescriptionQuery Pattern |                                            |                     |
+
+| -------------------------------- | ------------------------------------------ | ------------------- |
+
+| `person\_lookup`                  | Look up a person by ID                     | Direct lookup       |
+
+| `company\_lookup`                 | Look up a company by ID                    | Direct lookup       |
+
+| `technology\_lookup`              | Look up a technology by ID                 | Direct lookup       |
+
+| `person\_company`                 | Find the company where a person works      | One-hop traversal   |
+
+| `person\_connections`             | Find people directly connected to a person | One-hop traversal   |
+
+| `person\_technologies`            | Find technologies used by a person         | One-hop traversal   |
+
+| `company\_technologies`           | Find technologies used by a company        | One-hop traversal   |
+
+| `technology\_users`               | Find people using a technology             | One-hop traversal   |
+
+| `two\_hop\_network`                | Perform a two-hop `KNOWS` traversal        | Multi-hop traversal |
+
+| `company\_employee\_count`         | Count employees of a company               | Aggregation         |
+
+
+
+\---
+
+
+
+\## 🔎 Query Workload Categories
+
+
+
+The workloads represent several common graph-query patterns.
+
+
+
+\### 1. Direct Lookup
 
 
 
@@ -382,11 +526,17 @@ Examples:
 
 
 
-person\\\_lookup
+```
 
-company\\\_lookup
+person\_lookup
 
-technology\\\_lookup
+company\_lookup
+
+technology\_lookup
+
+
+
+```
 
 
 
@@ -394,7 +544,7 @@ These workloads test direct node retrieval using identifiers.
 
 
 
-2\\. One-Hop Traversal
+\### 2. One-Hop Traversal
 
 
 
@@ -402,35 +552,57 @@ Examples:
 
 
 
-person\\\_company
+```
 
-person\\\_connections
+person\_company
 
-person\\\_technologies
+person\_connections
 
-company\\\_technologies
+person\_technologies
 
-technology\\\_users
+company\_technologies
 
-
-
-These workloads test relationships between directly connected nodes.
+technology\_users
 
 
 
-3\\. Multi-Hop Traversal
-
-two\\\_hop\\\_network
+```
 
 
 
-This workload tests traversal across multiple graph relationships.
+These workloads test relationships between directly connected graph entities.
 
 
 
-4\\. Aggregation
+\### 3. Multi-Hop Traversal
 
-company\\\_employee\\\_count
+
+
+```
+
+two\_hop\_network
+
+
+
+```
+
+
+
+This workload tests traversal across multiple `KNOWS` relationships.
+
+
+
+\### 4. Aggregation
+
+
+
+```
+
+company\_employee\_count
+
+
+
+```
 
 
 
@@ -438,33 +610,39 @@ This workload tests counting related graph entities.
 
 
 
-⚡ Benchmark Metrics
+\---
 
 
 
-The benchmark calculates the following metrics.
+\## ⚡ Benchmark Metrics
 
 
 
-Metric	Description
+The benchmark calculates the following metrics:
 
-Average latency	Mean execution time
 
-Median latency	Middle execution time
 
-Minimum latency	Fastest execution
+| MetricDescription |                                     |
 
-Maximum latency	Slowest execution
+| ----------------- | ----------------------------------- |
 
-P95 latency	95th percentile latency
+| Average latency   | Mean execution time                 |
 
-P99 latency	99th percentile latency
+| Median latency    | Middle execution time               |
 
-Success rate	Percentage of successful executions
+| Minimum latency   | Fastest recorded execution          |
 
-Error count	Number of failed executions
+| Maximum latency   | Slowest recorded execution          |
 
-Record count	Number of returned records
+| P95 latency       | 95th percentile latency             |
+
+| P99 latency       | 99th percentile latency             |
+
+| Success rate      | Percentage of successful executions |
+
+| Error count       | Number of failed executions         |
+
+| Record count      | Number of returned records          |
 
 
 
@@ -472,43 +650,15 @@ Latency is measured in milliseconds.
 
 
 
-📈 CognoDB Benchmark Results
+\---
 
 
 
-The current CognoDB benchmark run completed successfully.
+\## 📈 CognoDB Benchmark Results
 
 
 
-Overall Results
-
-Metric	Result
-
-Total measurements	100
-
-Successful measurements	100
-
-Errors	0
-
-Success rate	100%
-
-Average latency	246.41 ms
-
-Median latency	246.01 ms
-
-Minimum latency	244.04 ms
-
-Maximum latency	250.95 ms
-
-P95 latency	249.57 ms
-
-P99 latency	250.74 ms
-
-## 📊 Benchmark Performance Results
-
-
-
-The benchmark was executed against the CognoDB Cloud graph database using the generated benchmark dataset and 10 representative graph-query workloads.
+The current CognoDB benchmark completed successfully.
 
 
 
@@ -516,29 +666,29 @@ The benchmark was executed against the CognoDB Cloud graph database using the ge
 
 
 
-| Metric | Result |
+| MetricResult            |           |
 
-|---|---:|
+| ----------------------- | --------- |
 
-| Total Measurements | 100 |
+| Total measurements      | 100       |
 
-| Successful Measurements | 100 |
+| Successful measurements | 100       |
 
-| Errors | 0 |
+| Errors                  | 0         |
 
-| Success Rate | 100% |
+| Success rate            | 100%      |
 
-| Average Latency | 246.41 ms |
+| Average latency         | 246.41 ms |
 
-| Median Latency | 246.01 ms |
+| Median latency          | 246.01 ms |
 
-| Minimum Latency | 244.04 ms |
+| Minimum latency         | 244.04 ms |
 
-| Maximum Latency | 250.95 ms |
+| Maximum latency         | 250.95 ms |
 
-| P95 Latency | 249.57 ms |
+| P95 latency             | 249.57 ms |
 
-| P99 Latency | 250.74 ms |
+| P99 latency             | 250.74 ms |
 
 
 
@@ -546,50 +696,93 @@ The benchmark was executed against the CognoDB Cloud graph database using the ge
 
 
 
-| Workload | Measurements | Average Latency | P95 Latency | Success Rate |
+| WorkloadMeasurementsAverage LatencyP95 LatencySuccess Rate |    |           |           |      |
 
-|---|---:|---:|---:|---:|
+| ---------------------------------------------------------- | -- | --------- | --------- | ---- |
 
-| `company\_lookup` | 10 | 245.28 ms | 247.70 ms | 100% |
+| `company\_lookup`                                           | 10 | 245.28 ms | 247.70 ms | 100% |
 
-| `person\_lookup` | 10 | 245.60 ms | 246.27 ms | 100% |
+| `person\_lookup`                                            | 10 | 245.60 ms | 246.27 ms | 100% |
 
-| `technology\_lookup` | 10 | 245.87 ms | 247.02 ms | 100% |
+| `technology\_lookup`                                        | 10 | 245.87 ms | 247.02 ms | 100% |
 
-| `company\_employee\_count` | 10 | 245.88 ms | 247.10 ms | 100% |
+| `company\_employee\_count`                                   | 10 | 245.88 ms | 247.10 ms | 100% |
 
-| `company\_technologies` | 10 | 245.93 ms | 246.66 ms | 100% |
+| `company\_technologies`                                     | 10 | 245.93 ms | 246.66 ms | 100% |
 
-| `person\_company` | 10 | 246.00 ms | 246.86 ms | 100% |
+| `person\_company`                                           | 10 | 246.00 ms | 246.86 ms | 100% |
 
-| `person\_technologies` | 10 | 246.19 ms | 248.22 ms | 100% |
+| `person\_technologies`                                      | 10 | 246.19 ms | 248.22 ms | 100% |
 
-| `person\_connections` | 10 | 247.13 ms | 248.84 ms | 100% |
+| `person\_connections`                                       | 10 | 247.13 ms | 248.84 ms | 100% |
 
-| `technology\_users` | 10 | 248.06 ms | 250.83 ms | 100% |
+| `technology\_users`                                         | 10 | 248.06 ms | 250.83 ms | 100% |
 
-| `two\_hop\_network` | 10 | 248.13 ms | 250.74 ms | 100% |
-
-
-
-\### Observations
+| `two\_hop\_network`                                          | 10 | 248.13 ms | 250.74 ms | 100% |
 
 
 
-\- All 100 benchmark measurements completed successfully.
+\### Result Interpretation
 
-\- No query execution errors were recorded.
 
-\- Average query latency was approximately \*\*246.41 ms\*\*.
 
-\- The fastest workload by average latency was `company\_lookup`.
+The current benchmark produced:
 
-\- The slowest workload by average latency was `two\_hop\_network`.
 
-\- The results demonstrate consistent query latency across the tested workloads.
 
-\- These measurements represent the current benchmark execution and should not be interpreted as universal CognoDB performance characteristics.
-📉 Benchmark Visualizations
+\- 100 successful measurements
+
+\- 0 errors
+
+\- 100% success rate
+
+\- Approximately 246.41 ms average latency
+
+\- Approximately 249.57 ms P95 latency
+
+
+
+The fastest workload by average latency was:
+
+
+
+```
+
+company\_lookup
+
+
+
+```
+
+
+
+The slowest workload by average latency was:
+
+
+
+```
+
+two\_hop\_network
+
+
+
+```
+
+
+
+The measurements show relatively consistent latency across the tested workloads.
+
+
+
+These results represent the current benchmark execution and should not be interpreted as universal CognoDB performance characteristics. Results can vary depending on network conditions, cloud infrastructure, database load, configuration, and execution environment.
+
+
+
+\---
+
+
+
+\## 📉 Benchmark Visualizations
 
 
 
@@ -597,19 +790,25 @@ The result-analysis pipeline generates three charts:
 
 
 
+```
+
 results/
 
 └── charts/
 
-\&#x20;   ├── latency\\\_by\\\_workload.png
+&#x20;   ├── latency\_by\_workload.png
 
-\&#x20;   ├── latency\\\_distribution.png
+&#x20;   ├── latency\_distribution.png
 
-\&#x20;   └── workload\\\_comparison.png
+&#x20;   └── workload\_comparison.png
 
-Generated Charts
 
-Latency by Workload
+
+```
+
+
+
+\### Latency by Workload
 
 
 
@@ -617,7 +816,7 @@ Shows the average latency of each benchmark workload.
 
 
 
-Latency Distribution
+\### Latency Distribution
 
 
 
@@ -625,7 +824,7 @@ Shows how query execution latency is distributed across benchmark measurements.
 
 
 
-Workload Comparison
+\### Workload Comparison
 
 
 
@@ -633,51 +832,149 @@ Provides a visual comparison of workload performance.
 
 
 
-📄 Benchmark Output
-
-Raw Results
+\---
 
 
 
-Raw measurements are saved to:
+\## 📄 Benchmark Output
 
 
 
-results/raw/cognodb\\\_benchmark.csv
-
-Processed Results
+\### Raw Results
 
 
 
-Workload-level results:
+Individual benchmark measurements are saved to:
 
 
 
-results/processed/cognodb\\\_summary.csv
+```
+
+results/raw/cognodb\_benchmark.csv
 
 
 
-Overall benchmark results:
+```
 
 
 
-results/processed/cognodb\\\_overall.csv
+The raw result file contains:
 
-🛠️ Technology Stack
 
-Programming Language
+
+\- Timestamp
+
+\- Database
+
+\- Workload
+
+\- Description
+
+\- Run number
+
+\- Status
+
+\- Latency
+
+\- Record count
+
+\- Error information
+
+
+
+\### Processed Workload Results
+
+
+
+Workload-level statistics are saved to:
+
+
+
+```
+
+results/processed/cognodb\_summary.csv
+
+
+
+```
+
+
+
+\### Overall Benchmark Results
+
+
+
+Overall statistics are saved to:
+
+
+
+```
+
+results/processed/cognodb\_overall.csv
+
+
+
+```
+
+
+
+\---
+
+
+
+\## 🛠️ Technology Stack
+
+
+
+\### Programming Language
+
+
+
+```
 
 Python 3.13
 
-Database
+
+
+```
+
+
+
+\### Database
+
+
+
+```
 
 CognoDB Cloud
+
+
+
+```
+
+
+
+\### Database Connectivity
+
+
+
+```
 
 Neo4j-compatible Bolt driver
 
 Cypher
 
-Python Libraries
+
+
+```
+
+
+
+\### Python Libraries
+
+
+
+```
 
 neo4j
 
@@ -687,7 +984,17 @@ pandas
 
 matplotlib
 
-Development Tools
+
+
+```
+
+
+
+\### Development Tools
+
+
+
+```
 
 Git
 
@@ -695,9 +1002,25 @@ GitHub
 
 PowerShell
 
-Visual Studio Code / Notepad
+Visual Studio Code
 
-📂 Project Structure
+Notepad
+
+
+
+```
+
+
+
+\---
+
+
+
+\## 📂 Project Structure
+
+
+
+```
 
 cognodb-cloud-benchmark/
 
@@ -706,6 +1029,20 @@ cognodb-cloud-benchmark/
 ├── data/
 
 │   └── generated/
+
+│       ├── persons.csv
+
+│       ├── companies.csv
+
+│       ├── technologies.csv
+
+│       ├── works\_at.csv
+
+│       ├── knows.csv
+
+│       ├── person\_uses.csv
+
+│       └── company\_uses.csv
 
 │
 
@@ -725,23 +1062,23 @@ cognodb-cloud-benchmark/
 
 ├── scripts/
 
-│   ├── analyze\\\_results.py
+│   ├── analyze\_results.py
 
-│   ├── check\\\_tls.py
+│   ├── check\_tls.py
 
-│   ├── generate\\\_dataset.py
+│   ├── generate\_dataset.py
 
-│   ├── load\\\_cognodb.py
+│   ├── load\_cognodb.py
 
-│   ├── test\\\_adapter.py
+│   ├── test\_adapter.py
 
-│   ├── test\\\_cognodb.py
+│   ├── test\_cognodb.py
 
-│   ├── test\\\_cognodb\\\_tls.py
+│   ├── test\_cognodb\_tls.py
 
-│   ├── test\\\_workloads.py
+│   ├── test\_workloads.py
 
-│   └── validate\\\_dataset.py
+│   └── validate\_dataset.py
 
 │
 
@@ -749,15 +1086,13 @@ cognodb-cloud-benchmark/
 
 │   └── benchmark/
 
-│       │
-
 │       ├── adapters/
 
 │       │   ├── base.py
 
 │       │   ├── cognodb.py
 
-│       │   └── \\\_\\\_init\\\_\\\_.py
+│       │   └── \_\_init\_\_.py
 
 │       │
 
@@ -765,13 +1100,13 @@ cognodb-cloud-benchmark/
 
 │       │   ├── queries.py
 
-│       │   └── \\\_\\\_init\\\_\\\_.py
+│       │   └── \_\_init\_\_.py
 
 │       │
 
 │       ├── runner.py
 
-│       └── \\\_\\\_init\\\_\\\_.py
+│       └── \_\_init\_\_.py
 
 │
 
@@ -783,75 +1118,151 @@ cognodb-cloud-benchmark/
 
 └── requirements.txt
 
-⚙️ Installation
 
-1\\. Clone the Repository
+
+```
+
+
+
+\---
+
+
+
+\## ⚙️ Installation
+
+
+
+\### 1. Clone the Repository
+
+
+
+```
 
 git clone https://github.com/iravi0009/cognodb-cloud-benchmark.git
 
 
 
-Move into the project directory:
+```
 
 
+
+\### 2. Move Into the Project Directory
+
+
+
+```
 
 cd cognodb-cloud-benchmark
 
-2\\. Create a Python Virtual Environment
 
-Windows PowerShell
+
+```
+
+
+
+\### 3. Create a Python Virtual Environment
+
+
+
+Windows PowerShell:
+
+
+
+```
 
 python -m venv .venv
 
 
 
-Activate it:
+```
 
 
 
-.venv\\\\Scripts\\\\Activate.ps1
+Activate the environment:
 
-3\\. Install Dependencies
+
+
+```
+
+.venv\\Scripts\\Activate.ps1
+
+
+
+```
+
+
+
+\### 4. Install Dependencies
+
+
+
+```
 
 pip install -r requirements.txt
 
-🔐 Environment Configuration
+
+
+```
 
 
 
-Create a local .env file.
+\---
 
 
 
-You can copy the example file:
+\## 🔐 Environment Configuration
 
 
+
+Create a local `.env` file.
+
+
+
+You can copy the example environment file:
+
+
+
+```
 
 Copy-Item .env.example .env
 
 
 
-Then configure your CognoDB credentials:
+```
 
 
 
-COGNODB\\\_URI=bolt+s://your-cognodb-host
-
-COGNODB\\\_USERNAME=your\\\_username
-
-COGNODB\\\_PASSWORD=your\\\_password
+Configure the required CognoDB credentials:
 
 
 
-Do not commit .env to Git.
+```
+
+COGNODB\_URI=bolt+s://your-cognodb-host
+
+COGNODB\_USERNAME=your\_username
+
+COGNODB\_PASSWORD=your\_password
 
 
 
-The .gitignore configuration excludes the .env file.
+```
 
 
 
-🗃️ Generate the Dataset
+Do not commit `.env` to Git.
+
+
+
+The repository `.gitignore` excludes local credentials and virtual-environment files.
+
+
+
+\---
+
+
+
+\## 🗃️ Generate the Dataset
 
 
 
@@ -859,7 +1270,13 @@ Run:
 
 
 
-python scripts/generate\\\_dataset.py
+```
+
+python scripts/generate\_dataset.py
+
+
+
+```
 
 
 
@@ -867,21 +1284,33 @@ The generator creates:
 
 
 
+```
+
 10,000 persons
 
 1,000 companies
 
 100 technologies
 
-10,000 works\\\_at relationships
+10,000 WORKS\_AT relationships
 
-50,000 knows relationships
+50,000 KNOWS relationships
 
-20,000 person\\\_uses relationships
+20,000 person USES relationships
 
-5,000 company\\\_uses relationships
+5,000 company USES relationships
 
-✅ Validate the Dataset
+
+
+```
+
+
+
+\---
+
+
+
+\## ✅ Validate the Dataset
 
 
 
@@ -889,35 +1318,39 @@ Run:
 
 
 
-python scripts/validate\\\_dataset.py
+```
+
+python scripts/validate\_dataset.py
 
 
 
-Expected output:
+```
 
 
+
+Expected validation:
+
+
+
+```
 
 CognoDB Benchmark Dataset Validation
 
 
 
+\[PASS] persons.csv: 10,000 records
 
+\[PASS] companies.csv: 1,000 records
 
-\\\[PASS] persons.csv: 10,000 records
+\[PASS] technologies.csv: 100 records
 
-\\\[PASS] companies.csv: 1,000 records
+\[PASS] works\_at.csv: 10,000 records
 
-\\\[PASS] technologies.csv: 100 records
+\[PASS] knows.csv: 50,000 records
 
-\\\[PASS] works\\\_at.csv: 10,000 records
+\[PASS] person\_uses.csv: 20,000 records
 
-\\\[PASS] knows.csv: 50,000 records
-
-\\\[PASS] person\\\_uses.csv: 20,000 records
-
-\\\[PASS] company\\\_uses.csv: 5,000 records
-
-
+\[PASS] company\_uses.csv: 5,000 records
 
 
 
@@ -925,7 +1358,17 @@ Dataset validation successful.
 
 All expected files and record counts are correct.
 
-📥 Load Dataset into CognoDB
+
+
+```
+
+
+
+\---
+
+
+
+\## 📥 Load Dataset into CognoDB
 
 
 
@@ -933,15 +1376,21 @@ Run:
 
 
 
-python scripts/load\\\_cognodb.py
+```
+
+python scripts/load\_cognodb.py
 
 
 
-The loader creates:
+```
 
 
 
-Nodes
+The loader creates the following node labels:
+
+
+
+```
 
 Person
 
@@ -949,9 +1398,19 @@ Company
 
 Technology
 
-Relationships
 
-WORKS\\\_AT
+
+```
+
+
+
+And the following relationship types:
+
+
+
+```
+
+WORKS\_AT
 
 KNOWS
 
@@ -959,9 +1418,15 @@ USES
 
 
 
+```
+
+
+
 The loader also creates indexes for:
 
 
+
+```
 
 Person.id
 
@@ -971,15 +1436,31 @@ Technology.id
 
 
 
-After loading, the current database contains:
+```
 
 
+
+After loading, the verified database contains:
+
+
+
+```
 
 Total nodes: 11,100
 
 Total relationships: 85,000
 
-🧪 Test CognoDB Adapter
+
+
+```
+
+
+
+\---
+
+
+
+\## 🧪 Test the CognoDB Adapter
 
 
 
@@ -987,7 +1468,13 @@ Run:
 
 
 
-python -m scripts.test\\\_adapter
+```
+
+python -m scripts.test\_adapter
+
+
+
+```
 
 
 
@@ -995,11 +1482,23 @@ Expected output:
 
 
 
+```
+
 CognoDB adapter connection successful!
 
 Current node count: 11,100
 
-🏃 Run Benchmark Workloads
+
+
+```
+
+
+
+\---
+
+
+
+\## 🏃 Run Benchmark Workloads
 
 
 
@@ -1007,7 +1506,13 @@ Run the workload test:
 
 
 
-python scripts/test\\\_workloads.py
+```
+
+python scripts/test\_workloads.py
+
+
+
+```
 
 
 
@@ -1015,7 +1520,13 @@ Alternatively, run the benchmark runner:
 
 
 
+```
+
 python -m src.benchmark.runner --database cognodb
+
+
+
+```
 
 
 
@@ -1023,23 +1534,29 @@ The benchmark runner:
 
 
 
-Connects to CognoDB.
+1\. Connects to CognoDB.
 
-Loads the configured workloads.
+2\. Loads the configured workloads.
 
-Performs warm-up execution.
+3\. Performs warm-up execution.
 
-Executes measured runs.
+4\. Executes measured runs.
 
-Records latency.
+5\. Records query latency.
 
-Records returned records.
+6\. Records returned records.
 
-Tracks errors.
+7\. Tracks execution errors.
 
-Saves raw benchmark results.
+8\. Saves raw benchmark results.
 
-📊 Analyze Benchmark Results
+
+
+\---
+
+
+
+\## 📊 Analyze Benchmark Results
 
 
 
@@ -1047,7 +1564,13 @@ Run:
 
 
 
-python scripts/analyze\\\_results.py
+```
+
+python scripts/analyze\_results.py
+
+
+
+```
 
 
 
@@ -1055,53 +1578,111 @@ The analysis script reads:
 
 
 
-results/raw/cognodb\\\_benchmark.csv
+```
+
+results/raw/cognodb\_benchmark.csv
 
 
 
-and generates:
+```
 
 
 
-results/processed/cognodb\\\_summary.csv
-
-results/processed/cognodb\\\_overall.csv
+And generates:
 
 
 
-and charts:
+```
+
+results/processed/cognodb\_summary.csv
+
+results/processed/cognodb\_overall.csv
 
 
 
-results/charts/latency\\\_by\\\_workload.png
-
-results/charts/latency\\\_distribution.png
-
-results/charts/workload\\\_comparison.png
-
-🔄 Complete Benchmark Workflow
+```
 
 
 
-The complete workflow can be executed in the following order:
+And performance charts:
 
 
 
-python scripts/generate\\\_dataset.py
+```
 
-python scripts/validate\\\_dataset.py
+results/charts/latency\_by\_workload.png
 
-python scripts/load\\\_cognodb.py
+results/charts/latency\_distribution.png
 
-python scripts/test\\\_workloads.py
-
-python scripts/analyze\\\_results.py
-
-🔒 Security
+results/charts/workload\_comparison.png
 
 
 
-Database credentials are stored in environment variables.
+```
+
+
+
+\---
+
+
+
+\## 🔄 Complete Benchmark Workflow
+
+
+
+The complete workflow is:
+
+
+
+```
+
+python scripts/generate\_dataset.py
+
+
+
+python scripts/validate\_dataset.py
+
+
+
+python scripts/load\_cognodb.py
+
+
+
+python scripts/test\_workloads.py
+
+
+
+python scripts/analyze\_results.py
+
+
+
+```
+
+
+
+Or execute the benchmark runner directly:
+
+
+
+```
+
+python -m src.benchmark.runner --database cognodb
+
+
+
+```
+
+
+
+\---
+
+
+
+\## 🔒 Security
+
+
+
+Database credentials are stored using environment variables.
 
 
 
@@ -1109,11 +1690,17 @@ Example:
 
 
 
-COGNODB\\\_URI=...
+```
 
-COGNODB\\\_USERNAME=...
+COGNODB\_URI=...
 
-COGNODB\\\_PASSWORD=...
+COGNODB\_USERNAME=...
+
+COGNODB\_PASSWORD=...
+
+
+
+```
 
 
 
@@ -1121,81 +1708,197 @@ Credentials should never be committed to Git.
 
 
 
-The repository ignores:
+The repository excludes sensitive and generated local files such as:
 
 
+
+```
 
 .env
 
 .venv/
 
+\_\_pycache\_\_/
 
-
-and generated benchmark data/results.
-
-
-
-♻️ Reproducibility
+\*.pyc
 
 
 
-The project is designed around a reproducible benchmark workflow.
+```
 
 
+
+Generated benchmark datasets and result artifacts can also be excluded when appropriate.
+
+
+
+\---
+
+
+
+\## ♻️ Reproducibility
+
+
+
+The project is designed around a reproducible benchmark workflow:
+
+
+
+```
 
 Dataset Generation
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Dataset Validation
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Database Loading
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Database Verification
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Benchmark Execution
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Raw Result Storage
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Statistical Analysis
 
-\&#x20;       ↓
+&#x20;      ↓
 
 Visualization
 
 
 
-Because the dataset is generated programmatically, the benchmark can be repeated with the same dataset-generation configuration.
+```
 
 
 
-🌐 GitHub Repository
+Because the dataset is generated programmatically and the workloads are explicitly defined, the benchmark can be repeated using the same dataset-generation and benchmark configuration.
 
 
 
-Source code:
+Benchmark results can vary between executions because of:
 
 
 
-https://github.com/iravi0009/cognodb-cloud-benchmark
+\- Network conditions
+
+\- Cloud infrastructure
+
+\- Database load
+
+\- Connection conditions
+
+\- Query execution environment
+
+\- Resource availability
 
 
 
-🚧 Future Improvements
+Therefore, benchmark results should be interpreted as measurements for the tested environment and configuration.
 
 
 
-The framework is designed to support additional databases and workloads.
+\---
+
+
+
+\## 🧩 Adapter Architecture
+
+
+
+The project uses a database adapter architecture to separate benchmark logic from database-specific connectivity.
+
+
+
+Current architecture:
+
+
+
+```
+
+Benchmark Runner
+
+&#x20;      │
+
+&#x20;      ▼
+
+Database Adapter Interface
+
+&#x20;      │
+
+&#x20;      ▼
+
+CognoDB Adapter
+
+&#x20;      │
+
+&#x20;      ▼
+
+CognoDB Cloud
+
+
+
+```
+
+
+
+The adapter layer is intended to allow additional graph databases to be integrated without rewriting the core benchmark runner and workload definitions.
+
+
+
+\### Current Adapter
+
+
+
+```
+
+CognoDB
+
+
+
+```
+
+
+
+\### Planned Adapters
+
+
+
+```
+
+Neo4j
+
+Memgraph
+
+FalkorDB
+
+ArangoDB
+
+
+
+```
+
+
+
+\---
+
+
+
+\## 🚧 Future Improvements
+
+
+
+The framework is designed to support additional databases, larger datasets, and more advanced benchmark scenarios.
 
 
 
@@ -1203,73 +1906,257 @@ Planned improvements include:
 
 
 
-Neo4j Cloud adapter
-
-Memgraph adapter
-
-FalkorDB adapter
-
-ArangoDB adapter
-
-Cross-database comparison
-
-Concurrent query execution
-
-Larger datasets
-
-Configurable benchmark sizes
-
-Throughput measurement
-
-Connection-pool benchmarking
-
-Query-plan analysis
-
-Automated performance regression detection
-
-CI/CD benchmark execution
-
-Historical benchmark comparison
-
-Automated benchmark reports
-
-📌 Current Project Status
-
-Component	Status
-
-Project setup	✅ Complete
-
-Git repository	✅ Complete
-
-GitHub repository	✅ Complete
-
-CognoDB connection	✅ Complete
-
-CognoDB adapter	✅ Complete
-
-Dataset generation	✅ Complete
-
-Dataset validation	✅ Complete
-
-Dataset loading	✅ Complete
-
-Database verification	✅ Complete
-
-Benchmark workloads	✅ Complete
-
-Benchmark execution	✅ Complete
-
-Raw result generation	✅ Complete
-
-Result analysis	✅ Complete
-
-Chart generation	✅ Complete
-
-Cross-database comparison	🚧 Planned
+\### Database Support
 
 
 
-📜 License
+\- Neo4j Cloud adapter
+
+\- Memgraph adapter
+
+\- FalkorDB adapter
+
+\- ArangoDB adapter
+
+\- Cross-database comparison
+
+
+
+\### Benchmark Improvements
+
+
+
+\- Larger datasets
+
+\- Configurable dataset sizes
+
+\- Configurable benchmark sizes
+
+\- Concurrent query execution
+
+\- Throughput measurement
+
+\- Connection-pool benchmarking
+
+\- Query-plan analysis
+
+\- More complex traversal workloads
+
+
+
+\### Analysis Improvements
+
+
+
+\- Automated performance regression detection
+
+\- Historical benchmark comparison
+
+\- Automated benchmark reports
+
+\- Extended statistical analysis
+
+\- Comparative workload dashboards
+
+
+
+\### Engineering Improvements
+
+
+
+\- CI/CD benchmark execution
+
+\- Automated benchmark pipelines
+
+\- Reproducible benchmark configurations
+
+\- Improved error handling
+
+\- Configurable workload parameters
+
+
+
+\---
+
+
+
+\## 📌 Current Project Status
+
+
+
+| ComponentStatus           |            |
+
+| ------------------------- | ---------- |
+
+| Project setup             | ✅ Complete |
+
+| Git repository            | ✅ Complete |
+
+| GitHub repository         | ✅ Complete |
+
+| CognoDB connection        | ✅ Complete |
+
+| CognoDB adapter           | ✅ Complete |
+
+| Dataset generation        | ✅ Complete |
+
+| Dataset validation        | ✅ Complete |
+
+| Dataset loading           | ✅ Complete |
+
+| Database verification     | ✅ Complete |
+
+| Benchmark workloads       | ✅ Complete |
+
+| Benchmark execution       | ✅ Complete |
+
+| Raw result generation     | ✅ Complete |
+
+| Result analysis           | ✅ Complete |
+
+| Statistical summaries     | ✅ Complete |
+
+| Chart generation          | ✅ Complete |
+
+| README documentation      | ✅ Complete |
+
+| Neo4j adapter             | 🚧 Planned |
+
+| Memgraph adapter          | 🚧 Planned |
+
+| FalkorDB adapter          | 🚧 Planned |
+
+| ArangoDB adapter          | 🚧 Planned |
+
+| Cross-database comparison | 🚧 Planned |
+
+| Concurrent benchmarking   | 🚧 Planned |
+
+
+
+\---
+
+
+
+\## 📊 Current Benchmark Snapshot
+
+
+
+The current completed CognoDB benchmark demonstrates:
+
+
+
+```
+
+Database:
+
+CognoDB Cloud
+
+
+
+Dataset:
+
+11,100 nodes
+
+85,000 relationships
+
+
+
+Workloads:
+
+10
+
+
+
+Measurements:
+
+100
+
+
+
+Successful:
+
+100
+
+
+
+Errors:
+
+0
+
+
+
+Success Rate:
+
+100%
+
+
+
+Average Latency:
+
+246.41 ms
+
+
+
+P95 Latency:
+
+249.57 ms
+
+
+
+Minimum Latency:
+
+244.04 ms
+
+
+
+Maximum Latency:
+
+250.95 ms
+
+
+
+```
+
+
+
+These values represent the current recorded benchmark execution.
+
+
+
+\---
+
+
+
+\## 👨‍💻 Author
+
+
+
+\*\*Ravi Raj\*\*
+
+
+
+B.E. Computer Science and Business Systems
+
+Chandigarh University
+
+
+
+\### Profiles
+
+
+
+\- GitHub: `iravi0009`
+
+\- LinkedIn: `raviraj0009`
+
+
+
+\---
+
+
+
+\## 📜 License
 
 
 
@@ -1277,66 +2164,5 @@ This project is intended for benchmarking, experimentation, research, and educat
 
 
 
-
-
-
-
-\\---
-
-
-
-
-
-\\## 4. Save the file
-
-
-
-
-
-After pasting everything:
-
-
-
-
-
-\\\*\\\*Press `Ctrl + S`\\\*\\\*
-
-
-
-
-
-Then close Notepad.
-
-
-
-
-
-\\---
-
-
-
-
-
-\\## 5. Verify the README
-
-
-
-
-
-Back in PowerShell, run:
-
-
-
-
-
-```powershell
-
-Get-Content README.md
-
-
-
-
-
-
-
+\---
 
