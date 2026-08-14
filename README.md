@@ -504,100 +504,91 @@ P95 latency	249.57 ms
 
 P99 latency	250.74 ms
 
-Result Interpretation
+## 📊 Benchmark Performance Results
 
 
 
-The benchmark produced 100 successful measurements with zero errors.
+The benchmark was executed against the CognoDB Cloud graph database using the generated benchmark dataset and 10 representative graph-query workloads.
 
 
 
-The observed average latency was approximately:
+\### Overall Results
 
 
 
-246.41 ms
+| Metric | Result |
+
+|---|---:|
+
+| Total Measurements | 100 |
+
+| Successful Measurements | 100 |
+
+| Errors | 0 |
+
+| Success Rate | 100% |
+
+| Average Latency | 246.41 ms |
+
+| Median Latency | 246.01 ms |
+
+| Minimum Latency | 244.04 ms |
+
+| Maximum Latency | 250.95 ms |
+
+| P95 Latency | 249.57 ms |
+
+| P99 Latency | 250.74 ms |
 
 
 
-The observed P95 latency was approximately:
+\### Workload Results
 
 
 
-249.57 ms
+| Workload | Measurements | Average Latency | P95 Latency | Success Rate |
+
+|---|---:|---:|---:|---:|
+
+| `company\_lookup` | 10 | 245.28 ms | 247.70 ms | 100% |
+
+| `person\_lookup` | 10 | 245.60 ms | 246.27 ms | 100% |
+
+| `technology\_lookup` | 10 | 245.87 ms | 247.02 ms | 100% |
+
+| `company\_employee\_count` | 10 | 245.88 ms | 247.10 ms | 100% |
+
+| `company\_technologies` | 10 | 245.93 ms | 246.66 ms | 100% |
+
+| `person\_company` | 10 | 246.00 ms | 246.86 ms | 100% |
+
+| `person\_technologies` | 10 | 246.19 ms | 248.22 ms | 100% |
+
+| `person\_connections` | 10 | 247.13 ms | 248.84 ms | 100% |
+
+| `technology\_users` | 10 | 248.06 ms | 250.83 ms | 100% |
+
+| `two\_hop\_network` | 10 | 248.13 ms | 250.74 ms | 100% |
 
 
 
-The fastest recorded execution was approximately:
+\### Observations
 
 
 
-244.04 ms
+\- All 100 benchmark measurements completed successfully.
 
+\- No query execution errors were recorded.
 
+\- Average query latency was approximately \*\*246.41 ms\*\*.
 
-The slowest recorded execution was approximately:
+\- The fastest workload by average latency was `company\_lookup`.
 
+\- The slowest workload by average latency was `two\_hop\_network`.
 
+\- The results demonstrate consistent query latency across the tested workloads.
 
-250.95 ms
-
-
-
-These results represent the current benchmark execution and should not be interpreted as universal database performance guarantees. Network conditions, database configuration, query parameters, workload characteristics, and infrastructure can influence benchmark results.
-
-
-
-📊 Workload-Level Results
-
-
-
-The current benchmark produced the following approximate average latency values:
-
-
-
-Workload	Measurements	Average Latency
-
-company\\\_lookup	10	245.29 ms
-
-person\\\_lookup	10	245.60 ms
-
-technology\\\_lookup	10	245.87 ms
-
-company\\\_employee\\\_count	10	245.88 ms
-
-company\\\_technologies	10	245.93 ms
-
-person\\\_company	10	246.00 ms
-
-person\\\_technologies	10	246.19 ms
-
-person\\\_connections	10	247.13 ms
-
-technology\\\_users	10	248.06 ms
-
-two\\\_hop\\\_network	10	248.13 ms
-
-Observations
-
-
-
-Based on the current benchmark run:
-
-
-
-Direct lookup workloads generally showed lower latency.
-
-Relationship traversal workloads showed slightly higher latency.
-
-The two\\\_hop\\\_network workload had the highest average latency.
-
-The company\\\_lookup workload had the lowest average latency.
-
-All workloads completed successfully.
-
-No benchmark errors were recorded.
-
+\- These measurements represent the current benchmark execution and should not be interpreted as universal CognoDB performance characteristics.
 📉 Benchmark Visualizations
 
 
