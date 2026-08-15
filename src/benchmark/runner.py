@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .adapters.cognodb import CognoDBAdapter
 from .adapters.neo4j import Neo4jAdapter
+from .adapters.memgraph import MemgraphAdapter
 from .workloads.queries import WORKLOADS as DEFAULT_WORKLOADS
 from .workloads.wikivote_queries import WORKLOADS as WIKIVOTE_WORKLOADS
 
@@ -18,7 +19,6 @@ SUPPORTED_DATABASES = [
     "arangodb",
 ]
 
-
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 RESULTS_DIR = BASE_DIR / "results"
@@ -28,15 +28,15 @@ RAW_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def create_adapter(database):
-    """
-    Create the adapter for the selected database.
-    """
 
     if database == "cognodb":
         return CognoDBAdapter()
 
     if database == "neo4j":
         return Neo4jAdapter()
+
+    if database == "memgraph":
+        return MemgraphAdapter()
 
     raise NotImplementedError(
         f"Adapter for '{database}' has not been implemented yet."
