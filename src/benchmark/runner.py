@@ -11,38 +11,28 @@ from .adapters.memgraph import MemgraphAdapter
 from .adapters.falkordb import FalkorDBAdapter
 from .workloads.queries import WORKLOADS as DEFAULT_WORKLOADS
 from .workloads.wikivote_queries import WORKLOADS as WIKIVOTE_WORKLOADS
+from .workloads.arangodb_wikivote_queries import WORKLOADS as ARANGODB_WIKIVOTE_WORKLOADS
 
-
-SUPPORTED_DATABASES = [
-    "cognodb",
-    "neo4j",
-    "memgraph",
-    "falkordb",
-    "arangodb",
-]
-
+SUPPORTED_DATABASES = ["cognodb", "neo4j", "memgraph", "falkordb", "arangodb"]
 BASE_DIR = Path(__file__).resolve().parents[2]
-RESULTS_DIR = BASE_DIR / "results"
-RAW_RESULTS_DIR = RESULTS_DIR / "raw"
+RAW_RESULTS_DIR = BASE_DIR / "results" / "raw"
 RAW_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def create_adapter(database):
-    adapters = {
+    return {
         "cognodb": CognoDBAdapter,
         "neo4j": Neo4jAdapter,
         "memgraph": MemgraphAdapter,
         "falkordb": FalkorDBAdapter,
         "arangodb": ArangoDBAdapter,
-    }
-    return adapters[database]()
+    }[database]()
 
 
 def run_single_query(adapter, workload):
     start = time.perf_counter()
     records = adapter.execute_query(workload.query, workload.parameters)
-    elapsed = time.perf_counter() - start
-    return elapsed * 1000, len(records)
+    return (time.perf_counter() - start) * 1000, len(records)
 
 
 def run_benchmark(adapter, database, warmup_runs, measured_runs, workloads):
@@ -54,13 +44,11 @@ def run_benchmark(adapter, database, warmup_runs, measured_runs, workloads):
     print(f"Workloads: {len(workloads)}")
     print(f"Warmup runs: {warmup_runs}")
     print(f"Measured runs: {measured_runs}")
-
     for workload in workloads:
         print("\n" + "-" * 60)
         print(f"Workload: {workload.name}")
         print(f"Description: {workload.description}")
         print("Warm-up:", end=" ")
-
         for i in range(warmup_runs):
             try:
                 run_single_query(adapter, workload)
@@ -68,52 +56,27 @@ def run_benchmark(adapter, database, warmup_runs, measured_runs, workloads):
             except Exception as exc:
                 print(f"FAILED({type(exc).__name__}: {exc})", end=" ", flush=True)
         print()
-
         for run_number in range(1, measured_runs + 1):
             print(f"Run {run_number}/{measured_runs}: ", end="", flush=True)
-            start_time = datetime.now(timezone.utc)
+            started = datetime.now(timezone.utc)
             try:
-                latency_ms, record_count = run_single_query(adapter, workload)
-                results.append({
-                    "timestamp_utc": start_time.isoformat(),
-                    "database": database,
-                    "workload": workload.name,
-                    "description": workload.description,
-                    "run": run_number,
-                    "status": "success",
-                    "latency_ms": round(latency_ms, 3),
-                    "record_count": record_count,
-                    "error": "",
-                })
-                print(f"{latency_ms:.3f} ms ({record_count} records)")
+                latency, count = run_single_query(adapter, workload)
+                results.append({"timestamp_utc": started.isoformat(), "database": database, "workload": workload.name, "description": workload.description, "run": run_number, "status": "success", "latency_ms": round(latency, 3), "record_count": count, "error": ""})
+                print(f"{latency:.3f} ms ({count} records)")
             except Exception as exc:
-                results.append({
-                    "timestamp_utc": start_time.isoformat(),
-                    "database": database,
-                    "workload": workload.name,
-                    "description": workload.description,
-                    "run": run_number,
-                    "status": "error",
-                    "latency_ms": "",
-                    "record_count": "",
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                results.append({"timestamp_utc": started.isoformat(), "database": database, "workload": workload.name, "description": workload.description, "run": run_number, "status": "error", "latency_ms": "", "record_count": "", "error": f"{type(exc).__name__}: {exc}"})
                 print(f"ERROR: {type(exc).__name__}: {exc}")
-
     return results
 
 
 def save_raw_results(results, database, dataset):
-    output_file = RAW_RESULTS_DIR / f"{database}_{dataset}_benchmark.csv"
-    fieldnames = [
-        "timestamp_utc", "database", "workload", "description", "run",
-        "status", "latency_ms", "record_count", "error",
-    ]
-    with output_file.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+    path = RAW_RESULTS_DIR / f"{database}_{dataset}_benchmark.csv"
+    fields = ["timestamp_utc", "database", "workload", "description", "run", "status", "latency_ms", "record_count", "error"]
+    with path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
         writer.writerows(results)
-    return output_file
+    return path
 
 
 def print_summary(results):
@@ -128,29 +91,20 @@ def print_summary(results):
     if not successful:
         print("No successful benchmark measurements.")
         return
-
-    latencies = sorted(float(r["latency_ms"]) for r in successful)
-
-    def percentile(p):
-        if len(latencies) == 1:
-            return latencies[0]
-        index = p * (len(latencies) - 1)
-        lower = int(index)
-        upper = min(lower + 1, len(latencies) - 1)
-        fraction = index - lower
-        return latencies[lower] + (latencies[upper] - latencies[lower]) * fraction
-
-    average = sum(latencies) / len(latencies)
-    median = percentile(0.50)
-    p95 = percentile(0.95)
-    p99 = percentile(0.99)
-
-    print(f"Average latency: {average:.3f} ms")
-    print(f"Median / P50 latency: {median:.3f} ms")
-    print(f"Minimum latency: {latencies[0]:.3f} ms")
-    print(f"Maximum latency: {latencies[-1]:.3f} ms")
-    print(f"P95 latency: {p95:.3f} ms")
-    print(f"P99 latency: {p99:.3f} ms")
+    values = sorted(float(r["latency_ms"]) for r in successful)
+    def pct(p):
+        if len(values) == 1:
+            return values[0]
+        index = p * (len(values) - 1)
+        lo = int(index)
+        hi = min(lo + 1, len(values) - 1)
+        return values[lo] + (values[hi] - values[lo]) * (index - lo)
+    print(f"Average latency: {sum(values) / len(values):.3f} ms")
+    print(f"Median / P50 latency: {pct(.50):.3f} ms")
+    print(f"Minimum latency: {values[0]:.3f} ms")
+    print(f"Maximum latency: {values[-1]:.3f} ms")
+    print(f"P95 latency: {pct(.95):.3f} ms")
+    print(f"P99 latency: {pct(.99):.3f} ms")
 
 
 def main():
@@ -160,14 +114,14 @@ def main():
     parser.add_argument("--runs", type=int, default=100)
     parser.add_argument("--dataset", choices=["synthetic", "wikivote"], default="wikivote")
     args = parser.parse_args()
-
     if args.warmup < 0:
         parser.error("--warmup cannot be negative")
     if args.runs <= 0:
         parser.error("--runs must be greater than zero")
-
-    workloads = WIKIVOTE_WORKLOADS if args.dataset == "wikivote" else DEFAULT_WORKLOADS
-
+    if args.dataset == "wikivote":
+        workloads = ARANGODB_WIKIVOTE_WORKLOADS if args.database == "arangodb" else WIKIVOTE_WORKLOADS
+    else:
+        workloads = DEFAULT_WORKLOADS
     print("=" * 60)
     print("CognoDB Cloud Graph Database Benchmark")
     print("=" * 60)
@@ -175,16 +129,15 @@ def main():
     print(f"Warm-up runs: {args.warmup}")
     print(f"Measured runs: {args.runs}")
     print(f"Dataset: {args.dataset}")
-
     adapter = create_adapter(args.database)
     try:
         print("\nConnecting to database...")
         adapter.connect()
         results = run_benchmark(adapter, args.database, args.warmup, args.runs, workloads)
-        output_file = save_raw_results(results, args.database, args.dataset)
+        output = save_raw_results(results, args.database, args.dataset)
         print_summary(results)
         print("\nRaw results saved")
-        print(output_file)
+        print(output)
     finally:
         adapter.close()
         print("\nDatabase connection closed.")
