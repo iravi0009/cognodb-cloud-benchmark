@@ -2020,7 +2020,7 @@ Planned improvements include:
 
 | README documentation      | ✅ Complete |
 
-| Neo4j adapter             | 🚧 Planned |
+| Neo4j adapter             | ✅ Complete |
 
 | Memgraph adapter          | 🚧 Planned |
 
@@ -2028,7 +2028,7 @@ Planned improvements include:
 
 | ArangoDB adapter          | 🚧 Planned |
 
-| Cross-database comparison | 🚧 Planned |
+| Cross-database comparison | ✅ Complete |
 
 | Concurrent benchmarking   | 🚧 Planned |
 
@@ -2127,6 +2127,75 @@ These values represent the current recorded benchmark execution.
 \---
 
 
+## 🗳️ Wiki-Vote Benchmark
+
+The project was extended with the SNAP Wiki-Vote graph dataset to evaluate
+graph traversal performance on a real-world directed network.
+
+### Dataset
+
+The Wiki-Vote dataset contains:
+
+- 7,115 WikiUser nodes
+- 103,689 VOTES relationships
+- 9 graph-query workloads
+- Point lookups
+- Indexed lookups
+- One-hop traversal
+- Two-hop traversal
+- Three-hop traversal
+- Incoming and outgoing degree counts
+- High-degree node traversal
+- Global relationship counting
+
+The dataset was loaded independently into both CognoDB Cloud and Neo4j.
+
+### Benchmark Configuration
+
+The final benchmark used:
+
+- 3 warm-up runs per workload
+- 30 measured runs per workload
+- 9 workloads
+- 270 measurements per database
+- 100% successful measurements
+
+### Final Results
+
+| Metric | CognoDB | Neo4j |
+|---|---:|---:|
+| Measurements | 270 | 270 |
+| Success rate | 100% | 100% |
+| Average latency | 424.429 ms | 180.937 ms |
+| P50 latency | 267.629 ms | 177.529 ms |
+| P95 latency | 1504.938 ms | 201.874 ms |
+| P99 latency | 1573.217 ms | 209.703 ms |
+| Maximum latency | 1614.861 ms | 255.048 ms |
+
+Neo4j achieved a 57.37% lower average latency than CognoDB
+for the Wiki-Vote benchmark.
+
+At P95, Neo4j achieved an 86.59% lower latency.
+
+The high-degree workload showed the largest workload-level difference:
+
+- CognoDB: 1495.673 ms
+- Neo4j: 201.823 ms
+- Difference: 86.51%
+
+All nine Wiki-Vote workloads were faster on Neo4j in this test environment.
+
+### Benchmark Output
+
+Wiki-Vote raw measurements are generated locally in:
+
+```text
+results/raw/cognodb_wikivote_benchmark.csv
+results/raw/neo4j_wikivote_benchmark.csv
+
+
+
+
 
 \## 👨‍💻 Author
 
@@ -2153,6 +2222,9 @@ Chandigarh University
 
 
 \---
+
+
+
 
 
 

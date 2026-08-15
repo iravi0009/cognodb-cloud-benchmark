@@ -5,7 +5,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .adapters.cognodb import CognoDBAdapter
-from .workloads.queries import WORKLOADS
+from .adapters.neo4j import Neo4jAdapter
+from .workloads.queries import WORKLOADS as DEFAULT_WORKLOADS
+from .workloads.wikivote_queries import WORKLOADS as WIKIVOTE_WORKLOADS
 
 
 SUPPORTED_DATABASES = [
@@ -32,6 +34,9 @@ def create_adapter(database):
 
     if database == "cognodb":
         return CognoDBAdapter()
+
+    if database == "neo4j":
+        return Neo4jAdapter()
 
     raise NotImplementedError(
         f"Adapter for '{database}' has not been implemented yet."
@@ -68,6 +73,7 @@ def run_benchmark(
     database,
     warmup_runs,
     measured_runs,
+    workloads,
 ):
     """
     Execute all workloads and return raw benchmark records.
@@ -83,11 +89,11 @@ def run_benchmark(
     print("=" * 60)
 
     print(f"Database: {database}")
-    print(f"Workloads: {len(WORKLOADS)}")
+    print(f"Workloads: {len(workloads)}")
     print(f"Warmup runs: {warmup_runs}")
     print(f"Measured runs: {measured_runs}")
 
-    for workload in WORKLOADS:
+    for workload in workloads:
 
         print()
         print("-" * 60)
@@ -186,12 +192,12 @@ def run_benchmark(
     return results
 
 
-def save_raw_results(results, database):
+def save_raw_results(results, database, dataset):
 
     output_file = (
-        RAW_RESULTS_DIR
-        / f"{database}_benchmark.csv"
-    )
+    RAW_RESULTS_DIR
+    / f"{database}_{dataset}_benchmark.csv"
+  )
 
     fieldnames = [
         "timestamp_utc",
@@ -315,7 +321,7 @@ def main():
         default=2,
         help="Number of warm-up runs per workload",
     )
-
+    
     parser.add_argument(
         "--runs",
         type=int,
@@ -323,7 +329,19 @@ def main():
         help="Number of measured runs per workload",
     )
 
+    parser.add_argument(
+        "--dataset",
+        choices=["synthetic", "wikivote"],
+        default="synthetic",
+        help="Workload dataset to benchmark",
+    )
+
     args = parser.parse_args()
+
+    if args.dataset == "wikivote":
+        workloads = WIKIVOTE_WORKLOADS
+    else:
+        workloads = DEFAULT_WORKLOADS
 
     if args.warmup < 0:
         parser.error("--warmup cannot be negative")
@@ -363,16 +381,18 @@ def main():
         )
 
         results = run_benchmark(
-            adapter=adapter,
-            database=args.database,
-            warmup_runs=args.warmup,
-            measured_runs=args.runs,
-        )
-
+    adapter=adapter,
+    database=args.database,
+    warmup_runs=args.warmup,
+    measured_runs=args.runs,
+    workloads=workloads,
+)
         output_file = save_raw_results(
-            results,
-            args.database,
-        )
+    results,
+    args.database,
+    args.dataset,
+
+    )
 
         print_summary(results)
 

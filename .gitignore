@@ -24,3 +24,11 @@ data/*.zip
 # IDE
 .vscode/
 .idea/
+
+# Wiki-Vote benchmark dataset
+data/wiki-Vote/
+data/*.tar.gz
+data/wiki-vote-edges.csv
+
+# Generated benchmark outputs
+results/
