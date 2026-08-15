@@ -5,56 +5,94 @@ import matplotlib.pyplot as plt
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-RAW_DIR = BASE_DIR / "results" / "raw"
-CHART_DIR = BASE_DIR / "results" / "charts"
 
-CHART_DIR.mkdir(parents=True, exist_ok=True)
+INPUT_FILE = (
+    BASE_DIR
+    / "results"
+    / "processed"
+    / "cognodb_vs_neo4j_memgraph_falkordb_wikivote.csv"
+)
 
+OUTPUT_DIR = (
+    BASE_DIR
+    / "results"
+    / "charts"
+)
 
-def load_average(filename):
-    path = RAW_DIR / filename
-
-    with path.open("r", encoding="utf-8", newline="") as f:
-        rows = list(csv.DictReader(f))
-
-    values = [
-        float(row["latency_ms"])
-        for row in rows
-        if row["status"] == "success"
-    ]
-
-    return sum(values) / len(values)
+OUTPUT_FILE = (
+    OUTPUT_DIR
+    / "wikivote_all_database_latency.png"
+)
 
 
 def main():
 
-    databases = ["CognoDB", "Neo4j", "Memgraph"]
+    OUTPUT_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
-    files = {
-        "CognoDB": "cognodb_wikivote_benchmark.csv",
-        "Neo4j": "neo4j_wikivote_benchmark.csv",
-        "Memgraph": "memgraph_wikivote_benchmark.csv",
-    }
+    databases = []
+    averages = []
 
-    averages = [
-        load_average(files[database])
-        for database in databases
-    ]
+    with INPUT_FILE.open(
+        "r",
+        encoding="utf-8",
+        newline="",
+    ) as file:
 
-    plt.figure(figsize=(8, 5))
-    plt.bar(databases, averages)
+        reader = csv.DictReader(file)
 
-    plt.title("Wiki-Vote Average Query Latency")
-    plt.ylabel("Average Latency (ms)")
-    plt.xlabel("Database")
+        for row in reader:
 
-    output = CHART_DIR / "wikivote_all_database_latency.png"
+            databases.append(
+                row["database"]
+            )
+
+            averages.append(
+                float(
+                    row["average_latency_ms"]
+                )
+            )
+
+    plt.figure(
+        figsize=(10, 6)
+    )
+
+    plt.bar(
+        databases,
+        averages,
+    )
+
+    plt.title(
+        "Wiki-Vote Benchmark - Average Latency"
+    )
+
+    plt.xlabel(
+        "Database"
+    )
+
+    plt.ylabel(
+        "Average Latency (ms)"
+    )
+
+    plt.xticks(
+        rotation=15
+    )
 
     plt.tight_layout()
-    plt.savefig(output, dpi=200)
+
+    plt.savefig(
+        OUTPUT_FILE,
+        dpi=200,
+        bbox_inches="tight",
+    )
+
     plt.close()
 
-    print(f"Created: {output}")
+    print(
+        f"Created: {OUTPUT_FILE}"
+    )
 
 
 if __name__ == "__main__":

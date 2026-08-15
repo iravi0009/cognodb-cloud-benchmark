@@ -7,6 +7,7 @@ from pathlib import Path
 from .adapters.cognodb import CognoDBAdapter
 from .adapters.neo4j import Neo4jAdapter
 from .adapters.memgraph import MemgraphAdapter
+from .adapters.falkordb import FalkorDBAdapter
 from .workloads.queries import WORKLOADS as DEFAULT_WORKLOADS
 from .workloads.wikivote_queries import WORKLOADS as WIKIVOTE_WORKLOADS
 
@@ -18,6 +19,7 @@ SUPPORTED_DATABASES = [
     "falkordb",
     "arangodb",
 ]
+
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -38,21 +40,15 @@ def create_adapter(database):
     if database == "memgraph":
         return MemgraphAdapter()
 
+    if database == "falkordb":
+        return FalkorDBAdapter()
+
     raise NotImplementedError(
         f"Adapter for '{database}' has not been implemented yet."
     )
 
 
 def run_single_query(adapter, workload):
-    """
-    Execute one workload and measure end-to-end latency.
-
-    Timing includes:
-    - sending the query
-    - database execution
-    - receiving results
-    - materializing returned records
-    """
 
     start = time.perf_counter()
 
@@ -75,13 +71,8 @@ def run_benchmark(
     measured_runs,
     workloads,
 ):
-    """
-    Execute all workloads and return raw benchmark records.
-    """
 
     results = []
-
-    timestamp = datetime.now(timezone.utc).isoformat()
 
     print()
     print("=" * 60)
@@ -100,15 +91,12 @@ def run_benchmark(
         print(f"Workload: {workload.name}")
         print(f"Description: {workload.description}")
 
-        # -------------------------------------------------
-        # Warm-up
-        # -------------------------------------------------
-
         print("Warm-up:", end=" ")
 
         for i in range(warmup_runs):
 
             try:
+
                 run_single_query(
                     adapter,
                     workload,
@@ -124,16 +112,16 @@ def run_benchmark(
 
                 print()
                 print(
-                    f"Warm-up failed: {type(exc).__name__}: {exc}"
+                    f"Warm-up failed: "
+                    f"{type(exc).__name__}: {exc}"
                 )
 
         print()
 
-        # -------------------------------------------------
-        # Measured runs
-        # -------------------------------------------------
-
-        for run_number in range(1, measured_runs + 1):
+        for run_number in range(
+            1,
+            measured_runs + 1,
+        ):
 
             print(
                 f"Run {run_number}/{measured_runs}: ",
@@ -141,7 +129,9 @@ def run_benchmark(
                 flush=True,
             )
 
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(
+                timezone.utc
+            )
 
             try:
 
@@ -157,7 +147,10 @@ def run_benchmark(
                     "description": workload.description,
                     "run": run_number,
                     "status": "success",
-                    "latency_ms": round(latency_ms, 3),
+                    "latency_ms": round(
+                        latency_ms,
+                        3,
+                    ),
                     "record_count": record_count,
                     "error": "",
                 }
@@ -180,24 +173,31 @@ def run_benchmark(
                     "status": "error",
                     "latency_ms": "",
                     "record_count": "",
-                    "error": f"{type(exc).__name__}: {exc}",
+                    "error": (
+                        f"{type(exc).__name__}: {exc}"
+                    ),
                 }
 
                 results.append(result)
 
                 print(
-                    f"ERROR: {type(exc).__name__}: {exc}"
+                    f"ERROR: "
+                    f"{type(exc).__name__}: {exc}"
                 )
 
     return results
 
 
-def save_raw_results(results, database, dataset):
+def save_raw_results(
+    results,
+    database,
+    dataset,
+):
 
     output_file = (
-    RAW_RESULTS_DIR
-    / f"{database}_{dataset}_benchmark.csv"
-  )
+        RAW_RESULTS_DIR
+        / f"{database}_{dataset}_benchmark.csv"
+    )
 
     fieldnames = [
         "timestamp_utc",
@@ -223,7 +223,6 @@ def save_raw_results(results, database, dataset):
         )
 
         writer.writeheader()
-
         writer.writerows(results)
 
     return output_file
@@ -261,8 +260,10 @@ def print_summary(results):
     )
 
     if not successful:
+
         print()
         print("No successful benchmark measurements.")
+
         return
 
     latencies = [
@@ -321,7 +322,7 @@ def main():
         default=2,
         help="Number of warm-up runs per workload",
     )
-    
+
     parser.add_argument(
         "--runs",
         type=int,
@@ -331,7 +332,10 @@ def main():
 
     parser.add_argument(
         "--dataset",
-        choices=["synthetic", "wikivote"],
+        choices=[
+            "synthetic",
+            "wikivote",
+        ],
         default="synthetic",
         help="Workload dataset to benchmark",
     )
@@ -344,10 +348,14 @@ def main():
         workloads = DEFAULT_WORKLOADS
 
     if args.warmup < 0:
-        parser.error("--warmup cannot be negative")
+        parser.error(
+            "--warmup cannot be negative"
+        )
 
     if args.runs <= 0:
-        parser.error("--runs must be greater than zero")
+        parser.error(
+            "--runs must be greater than zero"
+        )
 
     print("=" * 60)
     print("CognoDB Cloud Graph Database Benchmark")
@@ -363,6 +371,10 @@ def main():
 
     print(
         f"Measured runs: {args.runs}"
+    )
+
+    print(
+        f"Dataset: {args.dataset}"
     )
 
     adapter = create_adapter(
@@ -381,18 +393,18 @@ def main():
         )
 
         results = run_benchmark(
-    adapter=adapter,
-    database=args.database,
-    warmup_runs=args.warmup,
-    measured_runs=args.runs,
-    workloads=workloads,
-)
-        output_file = save_raw_results(
-    results,
-    args.database,
-    args.dataset,
+            adapter=adapter,
+            database=args.database,
+            warmup_runs=args.warmup,
+            measured_runs=args.runs,
+            workloads=workloads,
+        )
 
-    )
+        output_file = save_raw_results(
+            results,
+            args.database,
+            args.dataset,
+        )
 
         print_summary(results)
 

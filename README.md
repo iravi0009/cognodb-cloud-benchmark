@@ -2194,6 +2194,29 @@ results/raw/cognodb_wikivote_benchmark.csv
 results/raw/neo4j_wikivote_benchmark.csv
 
 
+### FalkorDB Cross-Database Benchmark
+
+The Wiki-Vote benchmark was extended to include FalkorDB.
+
+FalkorDB was successfully connected, loaded with the Wiki-Vote dataset, benchmarked using the same nine Wiki-Vote workloads, and compared against CognoDB, Neo4j, and Memgraph.
+
+| Database | Measurements | Average Latency (ms) | Median / P50 (ms) | Minimum (ms) | Maximum (ms) | P95 (ms) |
+|---|---:|---:|---:|---:|---:|---:|
+| CognoDB | 270 | 424.429 | 267.629 | 257.204 | 1614.861 | 1500.923 |
+| Neo4j | 270 | 180.937 | 177.529 | 171.549 | 255.048 | 201.476 |
+| Memgraph | 90 | 218.002 | 181.060 | 175.380 | 809.973 | 417.799 |
+| FalkorDB | 45 | 36.781 | 35.968 | 32.918 | 44.882 | 43.094 |
+
+FalkorDB recorded the lowest average latency in this benchmark execution at 36.781 ms.
+
+The measurement counts differ between databases because the benchmark runs were executed with different measured-run configurations. Therefore, these results should be interpreted as measurements of the tested executions rather than a perfectly equal-sample statistical comparison.
+
+The generated four-database comparison is saved to:
+
+```text
+results/processed/cognodb_vs_neo4j_memgraph_falkordb_wikivote.csv
+
+
 
 
 
