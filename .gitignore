@@ -8,10 +8,18 @@
 __pycache__/
 *.pyc
 
-# Benchmark results
+# Benchmark raw and processed results
 results/raw/
 results/processed/
-results/charts/
+
+# Generated benchmark outputs
+results/*
+
+# Keep final benchmark visualizations
+!results/
+!results/charts/
+!results/charts/wikivote_all_database_latency.png
+!results/charts/wikivote_mixed_concurrency.png
 
 # Generated benchmark dataset
 data/generated/
@@ -29,6 +37,3 @@ data/*.zip
 data/wiki-Vote/
 data/*.tar.gz
 data/wiki-vote-edges.csv
-
-# Generated benchmark outputs
-results/

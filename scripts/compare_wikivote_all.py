@@ -4,10 +4,14 @@ from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 RAW_DIR = BASE_DIR / "results" / "raw"
 PROCESSED_DIR = BASE_DIR / "results" / "processed"
 
-PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+PROCESSED_DIR.mkdir(
+    parents=True,
+    exist_ok=True,
+)
 
 
 DATABASES = {
@@ -15,10 +19,12 @@ DATABASES = {
     "Neo4j": "neo4j_wikivote_benchmark.csv",
     "Memgraph": "memgraph_wikivote_benchmark.csv",
     "FalkorDB": "falkordb_wikivote_benchmark.csv",
+    "ArangoDB": "arangodb_wikivote_benchmark.csv",
 }
 
 
 def load_latencies(filename):
+
     path = RAW_DIR / filename
 
     if not path.exists():
@@ -40,6 +46,11 @@ def load_latencies(filename):
             if row["status"] == "success"
             and row["latency_ms"] != ""
         ]
+
+    if not latencies:
+        raise ValueError(
+            f"No successful measurements found in {path}"
+        )
 
     return latencies
 
@@ -64,14 +75,20 @@ def calculate_metrics(latencies):
 
 def main():
 
-    print("=" * 78)
+    print("=" * 100)
+
     print(
         "CognoDB vs Neo4j vs Memgraph vs FalkorDB "
-        "- Wiki-Vote Benchmark"
+        "vs ArangoDB - Wiki-Vote Benchmark"
     )
-    print("=" * 78)
+
+    print("=" * 100)
 
     results = {}
+
+    # -------------------------------------------------
+    # Load all database results
+    # -------------------------------------------------
 
     for database, filename in DATABASES.items():
 
@@ -81,16 +98,24 @@ def main():
             latencies
         )
 
+    databases = list(DATABASES.keys())
+
+    # -------------------------------------------------
+    # Print comparison table
+    # -------------------------------------------------
+
     print()
+
     print(
-        f"{'Metric':<32}"
+        f"{'Metric':<34}"
         f"{'CognoDB':>14}"
         f"{'Neo4j':>14}"
         f"{'Memgraph':>14}"
         f"{'FalkorDB':>14}"
+        f"{'ArangoDB':>14}"
     )
 
-    print("-" * 88)
+    print("-" * 104)
 
     metrics = [
         ("Measurements", "measurements"),
@@ -104,48 +129,55 @@ def main():
     for label, key in metrics:
 
         values = [
-            results["CognoDB"][key],
-            results["Neo4j"][key],
-            results["Memgraph"][key],
-            results["FalkorDB"][key],
+            results[database][key]
+            for database in databases
         ]
 
         if key == "measurements":
 
             print(
-                f"{label:<32}"
+                f"{label:<34}"
                 f"{values[0]:>14}"
                 f"{values[1]:>14}"
                 f"{values[2]:>14}"
                 f"{values[3]:>14}"
+                f"{values[4]:>14}"
             )
 
         else:
 
             print(
-                f"{label:<32}"
+                f"{label:<34}"
                 f"{values[0]:>14.3f}"
                 f"{values[1]:>14.3f}"
                 f"{values[2]:>14.3f}"
                 f"{values[3]:>14.3f}"
+                f"{values[4]:>14.3f}"
             )
+
+    # -------------------------------------------------
+    # Fastest database
+    # -------------------------------------------------
 
     fastest = min(
         results,
-        key=lambda db: results[db]["average"],
+        key=lambda database:
+        results[database]["average"],
     )
 
     print()
+
     print(
         f"Fastest average latency: {fastest}"
     )
 
-    print()
-    print("=" * 78)
+    # -------------------------------------------------
+    # Save processed results
+    # -------------------------------------------------
 
     output_file = (
         PROCESSED_DIR
-        / "cognodb_vs_neo4j_memgraph_falkordb_wikivote.csv"
+        / "cognodb_vs_neo4j_memgraph_falkordb_arangodb_wikivote.csv"
     )
 
     with output_file.open(
@@ -194,8 +226,11 @@ def main():
             ])
 
     print()
+
+    print("=" * 100)
     print("Comparison saved")
-    print("=" * 78)
+    print("=" * 100)
+
     print(output_file)
 
 

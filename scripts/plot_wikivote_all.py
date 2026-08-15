@@ -10,7 +10,7 @@ INPUT_FILE = (
     BASE_DIR
     / "results"
     / "processed"
-    / "cognodb_vs_neo4j_memgraph_falkordb_wikivote.csv"
+    / "cognodb_vs_neo4j_memgraph_falkordb_arangodb_wikivote.csv"
 )
 
 OUTPUT_DIR = (
@@ -26,6 +26,11 @@ OUTPUT_FILE = (
 
 
 def main():
+
+    if not INPUT_FILE.exists():
+        raise FileNotFoundError(
+            f"Comparison file not found: {INPUT_FILE}"
+        )
 
     OUTPUT_DIR.mkdir(
         parents=True,
@@ -55,8 +60,13 @@ def main():
                 )
             )
 
+    if not databases:
+        raise ValueError(
+            "No database results found in comparison file."
+        )
+
     plt.figure(
-        figsize=(10, 6)
+        figsize=(11, 6)
     )
 
     plt.bar(
